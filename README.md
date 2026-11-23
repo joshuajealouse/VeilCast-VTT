@@ -7,7 +7,7 @@ screen laid flat in the table — with real miniatures on top of it. It runs ent
 your browser, needs no account, no subscription and no cloud, and every map you load
 stays on your own machine.
 
-👉 **[Launch VeilCast](https://cr-lolo.github.io/VeilCast-VTT/)** — no install required
+👉 **[Launch VeilCast](https://joshuajealouse.github.io/VeilCast-VTT/)** — no install required
 
 ---
 
