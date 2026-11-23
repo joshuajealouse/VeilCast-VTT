@@ -1,0 +1,440 @@
+  /* ---------- palette ----------
+     A theme only redefines tokens, never component rules, so every theme stays complete.
+     The "-rgb" variants provide separate color channels for the many rgba() values.
+     Canvas rendering resolves CSS variables once through PAL (see readPalette). */
+  :root{
+    --ink:#0B0B0C;        --ink-rgb:11,11,12;
+    --ink-deep:#050505;   --ink-deep-rgb:5,5,5;
+    --panel:#1A1A1B;      --panel-rgb:26,26,27;
+    --panel-2:#232324;
+    --panel-3:#131314;
+    --panel-hover:#2B2B2C; --line-hover:#4A4A4C;
+    --field:#0F0F10;
+    --line:#333334;       --line-rgb:51,51,52;
+    --text:#EDE7DC;       --text-rgb:237,231,220;
+    --text-soft:#BDB6AA;
+    --muted:#8E8880;
+    --muted-2:#6A655E;
+    --measure:#E0A33C;      --measure-rgb:224,163,60;
+    --measure-soft:#F6DFB4; --measure-soft-rgb:246,223,180;
+    --fog:#6E93B8;          --fog-rgb:110,147,184;
+    --fog-soft:#CBDCEB;
+    --danger:#C4543A;       --danger-rgb:196,84,58;
+    --danger-soft:#F0C4B6;
+    --danger-2:#C49080;
+    --frame:#7FA860;        --frame-rgb:127,168,96;
+    --frame-soft:#D6E8C6;
+    --point:#F0C860;        --point-rgb:240,200,96;
+    --ring:#FFFFFF;         --ring-rgb:255,255,255;
+    --shadow-rgb:0,0,0;
+    --panel-w:344px;
+    --ui:1;            /* UI chrome scale; the map is never scaled */
+    --radius:6px;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  /* ---------- themes ----------
+     Themes define tokens, never component rules, so every theme stays complete. Slate
+     uses :root as the default theme and needs no separate block.
+
+     --ink-deep stays dark in every theme: it is the map fog and table-window background.
+     The "-soft" tokens sit on accent tints, so they must contrast with both light and
+     dark themes. */
+
+  /* The original cool-blue look, retained so existing Slate users keep it after updates. */
+  :root[data-theme="slate"]{
+    --ink:#080A0F;        --ink-rgb:8,10,15;
+    --ink-deep:#05070B;   --ink-deep-rgb:5,7,11;      /* fog, outlines, labels */
+    --panel:#111722;      --panel-rgb:17,23,34;
+    --panel-2:#182131;
+    --field:#0B111A;                                   /* field background */
+    --line:#27344A;       --line-rgb:39,52,74;
+    --text:#E4DFD1;      --text-rgb:228,223,209;
+    --text-soft:#B9C2D0;                               /* secondary canvas text */
+    --muted:#8494AC;
+    --muted-2:#6C7C94;                                 /* most subdued */
+    --measure:#5AD2E8;      --measure-rgb:90,210,232;
+    --measure-soft:#CFF3FA; --measure-soft-rgb:207,243,250;
+    --fog:#E0A33C;          --fog-rgb:224,163,60;
+    --fog-soft:#FBE3B4;
+    --danger:#E0603C;       --danger-rgb:224,96,60;
+    --danger-soft:#F6C9BC;
+    --frame:#8BE07A;        --frame-rgb:139,224,122;
+    --frame-soft:#DBF5D3;
+    --point:#FFD86B;        --point-rgb:255,216,107;
+    --ring:#FFFFFF;       --ring-rgb:255,255,255;       /* active token ring */
+    --panel-3:#0D131C;                                 /* bottom of panel gradient */
+    --panel-hover:#20293B; --line-hover:#3A4A66;       /* button hover state */
+    --danger-2:#D9A08E;                                /* muted toolbar red */
+    --shadow-rgb:0,0,0;
+  }
+
+  /* Parchment: ink on cream for a daytime table or a lit room, with a rust accent.
+     This theme stress-tests the token layer. */
+  :root[data-theme="parchment"]{
+    --ink:#DED6C4;        --ink-rgb:222,214,196;
+    --ink-deep:#3E362B;   --ink-deep-rgb:62,54,43;
+    --panel:#FBF7EC;      --panel-rgb:251,247,236;
+    --panel-2:#F2ECDC;
+    --panel-3:#E8E0CC;
+    --panel-hover:#EDE5D2; --line-hover:#A89C82;
+    --field:#FFFDF6;
+    --line:#C9BFA8;       --line-rgb:201,191,168;
+    --text:#241E16;       --text-rgb:36,30,22;
+    --text-soft:#4A4034;
+    --muted:#6B5F4E;
+    --muted-2:#8A7D69;
+    --measure:#8C3A24;      --measure-rgb:140,58,36;
+    --measure-soft:#5A2214; --measure-soft-rgb:90,34,20;
+    --fog:#7A6320;          --fog-rgb:122,99,32;
+    --fog-soft:#42350E;
+    --danger:#A32E1E;       --danger-rgb:163,46,30;
+    --danger-soft:#6B1C10;
+    --danger-2:#8A4030;
+    --frame:#3F6B2A;        --frame-rgb:63,107,42;
+    --frame-soft:#27431A;
+    --point:#8A6410;        --point-rgb:138,100,16;
+    --ring:#241E16;         --ring-rgb:36,30,22;
+    /* Brown rather than black shadow: the same alpha is much lighter on cream. */
+    --shadow-rgb:120,105,80;
+  }
+
+  /* `zoom` reflows the layout rather than leaving its original space. It applies only to
+     interface surfaces; the canvas and pointer-positioned menus stay unscaled so their
+     coordinate calculations remain correct. */
+  #panel,#rail,#ctxbar,#toolHintBar,#state,#onboard,#toast,#entry,
+  #modal .card,#player .card,#shortcuts .card,#conc .card,#multi .card,
+  #textDialog .card,#confirmDialog .card,#settingsDialog .card{zoom:var(--ui)}
+  /* No panel offset correction is needed: zoom scales both the panel width and the
+     `left` position of elements anchored to it. */
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;overflow:hidden;background:var(--ink);color:var(--text);
+    font-family:var(--sans);-webkit-tap-highlight-color:transparent}
+  /* Applying this to body blocked campaign-name copying; only draggable surfaces need it. */
+  #stage,#rail,#ctxbar,#tabs,.lib,#catgrid,.ini,.eyebrow.fold{
+    -webkit-user-select:none;user-select:none}
+  #stage{position:absolute;inset:0;display:block;touch-action:none}
+
+  /* ---------- side panel ---------- */
+  #panel{position:absolute;top:0;left:0;bottom:0;width:var(--panel-w);z-index:10;
+    background:linear-gradient(180deg,var(--panel) 0%, var(--panel-3) 100%);
+    display:flex;flex-direction:column;
+    transition:transform .18s ease}
+  #panel.hidden{transform:translateX(-100%)}
+  .brand{padding:13px 16px 9px;border-bottom:1px solid var(--line);flex:none}
+  .brand h1{margin:0;font-size:14px;letter-spacing:-.01em;font-weight:600}
+  .brand p{margin:3px 0 0;font-size:11px;color:var(--muted);font-family:var(--mono)}
+  #tabs{display:flex;flex:none;border-bottom:1px solid var(--line)}
+  #tabs button{flex:1 1 0;min-width:0;border:none;border-radius:0;background:transparent;padding:10px 2px;
+    font-size:12px;letter-spacing:0;color:var(--muted);
+    border-bottom:2px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #tabs button.on{color:var(--text);border-bottom-color:var(--measure);background:rgba(var(--measure-rgb),.06)}
+  .tabpane{display:none;overflow-y:auto;overscroll-behavior:contain;flex:1}
+  .tabpane.on{display:block}
+  section{border-bottom:1px solid var(--line);padding:12px 14px 14px}
+  .eyebrow.fold{cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none}
+  .eyebrow.fold:hover{color:var(--text)}
+  .eyebrow .chev{display:inline-block;transition:transform .15s;font-size:9px}
+  .eyebrow.closed .chev{transform:rotate(-90deg)}
+  .fbody{overflow:hidden}
+  #library{max-height:300px;overflow-y:auto;padding-right:2px}
+  /* Float over the map, left of the rail and below the notice. In a 344px column it
+     became too narrow and covered the library buttons needed for the first step. */
+  #onboard{position:absolute;top:52px;right:74px;z-index:12;width:320px;display:none;
+    background:rgba(var(--panel-rgb),.96);border-radius:10px;
+    backdrop-filter:blur(6px);padding:14px 16px 12px;
+    box-shadow:0 12px 32px rgba(var(--shadow-rgb),.45)}
+  #onboard.on{display:block}
+  #onboard h4{margin:0 0 10px;font-size:13px;letter-spacing:-.01em;
+    color:var(--measure);font-weight:600}
+  #onboard p{margin:11px 0 0;font-size:11px;line-height:1.45;color:var(--muted)}
+  #onboardClose{position:absolute;top:7px;right:8px;padding:1px 6px;font-size:13px;
+    background:transparent;border:none;color:var(--muted)}
+  #onboardClose:hover{color:var(--text)}
+  #onboardNever{margin-top:10px;width:100%;font-size:11px;padding:6px;background:transparent}
+  #steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;counter-reset:step}
+  /* This row has a number, title, and explanation but only two columns. Explicitly place
+     the explanation in the wide column so it does not wrap one character at a time. */
+  #steps li{counter-increment:step;display:grid;grid-template-columns:18px 1fr;
+    column-gap:10px;row-gap:3px;align-items:baseline;font-size:12.5px;color:var(--muted)}
+  #steps li::before{content:counter(step);font-family:var(--mono);font-size:10px;
+    color:var(--muted);text-align:center;border:1px solid var(--line);border-radius:50%;
+    width:18px;height:18px;line-height:16px}
+  #steps li.ok{color:var(--muted)}
+  #steps li.ok::before{content:'✓';color:var(--field);background:var(--frame);border-color:var(--frame)}
+  #steps li.ok b{text-decoration:line-through;color:var(--muted);font-weight:500}
+  #steps li.now::before{border-color:var(--measure);color:var(--measure)}
+  #steps b{grid-column:2;color:var(--text);font-weight:600}
+  #steps span{grid-column:2;font-size:11px;line-height:1.45;color:var(--muted)}
+  #uncalibrated{color:var(--fog)}
+  #initiativeList{max-height:330px;overflow-y:auto}
+  #effectList{max-height:200px;overflow-y:auto}
+  /* Uppercase 10px labels with .16em tracking made fourteen sections shout at once.
+     Sentence case at the same size stays readable without competing with the content. */
+  .eyebrow{font-size:12px;letter-spacing:0;text-transform:none;color:var(--muted);margin:0 0 9px;font-weight:600}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+
+  button,.filebtn{font:inherit;font-size:12px;color:var(--text);background:var(--panel-2);
+    border:1px solid var(--line);border-radius:var(--radius);padding:8px 6px;cursor:pointer;
+    text-align:center;line-height:1.2;transition:background .12s,border-color .12s}
+  button:hover,.filebtn:hover{background:var(--panel-hover);border-color:var(--line-hover)}
+  button:focus-visible,.filebtn:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--measure);outline-offset:1px}
+  button.on{background:rgba(var(--measure-rgb),.14);border-color:var(--measure);color:var(--measure-soft)}
+  button.wide{width:100%}
+  button.ghost{background:transparent}
+  label.field{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin:7px 0}
+  input[type=number],input[type=text],select{font:inherit;font-family:var(--mono);font-size:12px;width:92px;
+    padding:5px 6px;color:var(--text);background:var(--field);border:1px solid var(--line);border-radius:4px}
+  select.wide{width:100%;margin-top:3px}
+  input[type=range]{width:100%;accent-color:var(--measure)}
+  .hint{font-size:11px;color:var(--muted);line-height:1.45;margin:8px 0 0}
+  kbd{font-family:var(--mono);font-size:10px;background:var(--field);border:1px solid var(--line);
+    border-radius:3px;padding:1px 4px;color:var(--text)}
+
+  /* ---------- library ---------- */
+  .lib{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+  .lib button{padding:0;height:62px;background-size:cover;background-position:center;
+    position:relative;overflow:hidden;border-radius:5px}
+  .lib button.on{border-color:var(--frame);box-shadow:0 0 0 1px var(--frame)}
+  .lib button .nm{position:absolute;left:0;right:0;bottom:0;background:rgba(var(--ink-deep-rgb),.8);font-size:9px;
+    font-family:var(--mono);padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+  .lib button .tp{position:absolute;top:3px;left:3px;background:rgba(var(--ink-deep-rgb),.8);border-radius:3px;
+    font-size:8px;font-family:var(--mono);padding:1px 4px;letter-spacing:.06em}
+  .lib button.on .tp{color:var(--frame)}
+  .lib button.dragging{opacity:.35}
+  .lib button.destination{box-shadow:0 0 0 2px var(--measure)}
+
+  /* ---------- effect list ---------- */
+  .fxrow{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(var(--line-rgb),.6);font-size:12px}
+  .fxrow .dot{width:10px;height:10px;border-radius:2px;flex:none}
+  .fxrow .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fxrow button{padding:3px 6px;font-size:11px}
+
+  /* ---------- initiative ---------- */
+  .ini{display:flex;align-items:center;gap:7px;padding:6px 6px;border-radius:5px;cursor:pointer;
+    border-bottom:1px solid rgba(var(--line-rgb),.5)}
+  .ini:hover{background:rgba(var(--measure-rgb),.07)}
+  .ini .iv{font-family:var(--mono);font-size:12px;color:var(--muted);min-width:20px;text-align:right}
+  .ini .dot{width:9px;height:9px;border-radius:2px;flex:none}
+  .ini .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px}
+  .ini .hp{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+  /* Edit and remove were adjacent 20×18px targets, and remove required no confirmation.
+     Increase both to the minimum pointer target and separate the destructive action. */
+  .ini .ed,.ini .x{min-width:26px;height:26px;padding:0;flex:none;display:flex;
+    align-items:center;justify-content:center;
+    background:transparent;border-color:transparent;color:var(--muted)}
+  .ini .x{font-size:14px;margin-left:5px}
+  .ini .x:hover{color:var(--danger);border-color:var(--line)}
+  .ini.turn{background:rgba(var(--measure-rgb),.13);box-shadow:inset 2px 0 0 var(--measure)}
+  .ini.turn .nm{font-weight:600}
+  .ini.down .nm{opacity:.5;text-decoration:line-through}
+  .ini.sel{background:rgba(var(--measure-rgb),.09);border-bottom-color:transparent}
+  .ini .pos{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:14px;text-align:right}
+  .ini .bar{width:54px;height:7px;border-radius:4px;background:rgba(var(--ring-rgb),.10);position:relative;overflow:hidden;flex:none}
+  .ini .bar i{position:absolute;top:0;bottom:0;left:0;display:block;border-radius:4px}
+  .ini .bar .tp{background:var(--measure-soft);opacity:.85}
+  .ini .cd{display:inline-flex;gap:3px;margin-left:5px;vertical-align:-2px}
+  .ini .cd svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .ini .ed{font-size:12px}
+  .ini .ed:hover{color:var(--text);border-color:var(--line)}
+
+  .strip{padding:9px 8px 11px;margin:0 0 6px;border-radius:0 0 6px 6px;
+    background:rgba(var(--measure-rgb),.06);border:1px solid rgba(var(--measure-rgb),.18);border-top:none}
+  .strip .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px}
+  .strip .modes button{font-size:11px;padding:6px 2px}
+  .strip .modes button.on{background:rgba(var(--danger-rgb),.16);border-color:var(--danger);color:var(--danger-soft)}
+  .strip .modes button.heal.on{background:rgba(var(--frame-rgb),.16);border-color:var(--frame);color:var(--frame-soft)}
+  .strip .modes button.temp.on{background:rgba(var(--measure-rgb),.16);border-color:var(--measure);color:var(--measure-soft)}
+  .strip .apply{display:flex;gap:5px}
+  .strip .apply input{flex:1;width:auto;text-align:center;font-size:14px;padding:7px}
+  .strip .apply button{min-width:66px}
+  .strip .conds{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
+  .strip .conds button{padding:4px;width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+  .strip .conds button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .strip .conds button.on{background:rgba(var(--fog-rgb),.18);border-color:var(--fog);color:var(--fog-soft)}
+  .strip .saves{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:var(--muted)}
+  .strip .saves .pips{display:flex;gap:5px}
+  .strip .saves .pip{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--line);background:transparent;padding:0}
+  .strip .saves .pip.ok{background:var(--frame);border-color:var(--frame)}
+  .strip .saves .pip.ko{background:var(--danger);border-color:var(--danger)}
+
+  .spr{width:34px;height:34px;padding:0;background-size:cover;background-position:center;border-radius:5px}
+  .spr.on{border-color:var(--measure);box-shadow:0 0 0 1px var(--measure)}
+  #fxsprites{display:flex;gap:5px;flex-wrap:wrap;max-width:340px}
+  #fxlibrary{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+  #fxlibrary button{padding:0;height:54px;background-size:cover;background-position:center;
+    position:relative;overflow:hidden;border-radius:5px}
+  #fxlibrary .nm{position:absolute;left:0;right:0;bottom:0;background:rgba(var(--ink-deep-rgb),.8);
+    font-size:9px;font-family:var(--mono);padding:1px 3px}
+  #catgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px;max-height:420px;overflow-y:auto}
+  #catgrid button.cat{padding:0;height:66px;background-size:cover;background-position:center;
+    background-color:var(--field);position:relative;overflow:hidden;border-radius:5px}
+  #catgrid button.cat.on{border-color:var(--measure);box-shadow:0 0 0 1px var(--measure)}
+  #catgrid .nm{position:absolute;left:0;right:0;bottom:0;background:rgba(var(--ink-deep-rgb),.82);font-size:9.5px;
+    padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+  #catgrid .fav{position:absolute;top:3px;right:4px;color:var(--point);font-size:11px;
+    text-shadow:0 0 4px rgba(var(--shadow-rgb),.9)}
+  #catgrid .tp{position:absolute;top:3px;left:3px;background:rgba(var(--ink-deep-rgb),.8);border-radius:3px;
+    font-size:8px;font-family:var(--mono);padding:1px 4px;color:var(--muted)}
+  /* The map menu matches the campaign menu because both use the same interaction. */
+  #campaignMenuPanel,#mapMenu{position:absolute;z-index:40;top:96px;left:16px;width:220px;padding:5px;
+    background:var(--panel);border-radius:8px;
+    box-shadow:0 12px 32px rgba(var(--shadow-rgb),.5);display:flex;flex-direction:column;gap:2px}
+  #campaignMenuPanel.hide,#mapMenu.hide{display:none}
+  #campaignMenuPanel button,#mapMenu button{text-align:left;background:transparent;border-color:transparent;padding:8px 10px}
+  #campaignMenuPanel button:hover,#mapMenu button:hover{background:var(--panel-2);border-color:var(--line)}
+  #campaignMenuPanel button.danger,#mapMenu button.danger{color:var(--danger)}
+  #campaignMenuPanel .sepm,#mapMenu .sepm{height:1px;background:var(--line);margin:3px 0}
+  #mapMenu{width:224px}
+  #mapMenu .header{padding:5px 10px 6px;font-size:11px;letter-spacing:0;
+    color:var(--muted);font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* The choose-player mode waits for a specific click, so make that clear and show how
+     to exit the mode. */
+  #anchorNotice{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:14;
+    display:none;align-items:center;gap:10px;background:rgba(var(--panel-rgb),.96);
+    border:1px solid var(--point);border-radius:8px;padding:7px 12px;font-size:12px;
+    color:var(--text);box-shadow:0 10px 28px rgba(var(--shadow-rgb),.45)}
+  #anchorNotice.on{display:flex}
+  #anchorNotice b{color:var(--point);font-weight:600}
+  #tip{position:absolute;z-index:40;display:none;pointer-events:none;white-space:nowrap;
+    background:rgba(var(--ink-rgb),.96);border-radius:4px;
+    padding:4px 8px;font-size:11px;color:var(--text)}
+  #entry{position:absolute;left:50%;bottom:160px;transform:translateX(-50%);z-index:13;display:none;
+    background:rgba(var(--ink-rgb),.95);border:1px solid var(--measure);border-radius:8px;padding:9px 14px;
+    font-family:var(--mono);font-size:14px;color:var(--text);pointer-events:none}
+  #entry b{color:var(--measure);font-weight:600}
+
+  .multi{display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid rgba(var(--line-rgb),.5);font-size:12px}
+  .multi .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .multi button{padding:4px 8px;font-size:11px;min-width:66px}
+  .multi button.full{background:rgba(var(--danger-rgb),.18);border-color:var(--danger);color:var(--danger-soft)}
+  .multi button.half{background:rgba(var(--fog-rgb),.18);border-color:var(--fog);color:var(--fog-soft)}
+
+  /* ---------- dialog ---------- */
+  #modal,#player,#shortcuts,#conc,#multi,#textDialog,#confirmDialog,#settingsDialog{position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;
+    background:rgba(var(--ink-deep-rgb),.62);backdrop-filter:blur(3px)}
+  #modal.hide,#player.hide,#shortcuts.hide,#conc.hide,#multi.hide,#textDialog.hide,#confirmDialog.hide,#settingsDialog.hide{display:none}
+  #modal .card,#player .card,#shortcuts .card,#conc .card,#multi .card,#textDialog .card,#confirmDialog .card,#settingsDialog .card{width:330px;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:18px 18px 16px;box-shadow:0 18px 48px rgba(var(--shadow-rgb),.55)}
+  #modal h2,#player h2,#shortcuts h2,#conc h2,#multi h2,#textDialog h2,#confirmDialog h2,#settingsDialog h2{margin:0 0 14px;font-size:15px;letter-spacing:-.01em;color:var(--text);font-weight:600}
+  #modal label,#player label,#multi label,#textDialog label{display:block;font-size:11px;color:var(--muted);margin-bottom:10px}
+  #modal label input,#modal label select,#player label input,#multi label input,#textDialog label input{width:100%;margin-top:4px;padding:8px;font-size:13px}
+  #modal .two,#player .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  #modal .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:2px 0 14px}
+  #modal .seg button{font-size:11px;padding:7px 4px}
+  #modal .seg button.on{background:rgba(var(--measure-rgb),.14);border-color:var(--measure);color:var(--measure-soft)}
+  #modal .acts,#player .acts,#shortcuts .acts,#conc .acts,#multi .acts,#textDialog .acts,#confirmDialog .acts,#settingsDialog .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+  #modal .acts .primary,#player .acts .primary,#shortcuts .acts .primary,#conc .acts .primary,#multi .acts .primary,#textDialog .acts .primary,#confirmDialog .acts .primary,#settingsDialog .acts .primary{background:rgba(var(--measure-rgb),.16);border-color:var(--measure);color:var(--measure-soft)}
+
+  /* ---------- tool rail ---------- */
+  #rail{position:absolute;top:50%;right:12px;transform:translateY(-50%);z-index:11;
+    display:flex;flex-direction:column;gap:5px;padding:6px;border-radius:10px;
+    background:rgba(var(--panel-rgb),.94);backdrop-filter:blur(10px);
+    box-shadow:0 6px 20px rgba(var(--shadow-rgb),.35)}
+  #rail button{width:42px;height:42px;padding:0;display:flex;align-items:center;justify-content:center;position:relative}
+  #rail button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  #rail button .k{position:absolute;bottom:2px;right:4px;font-family:var(--mono);font-size:8px;color:var(--muted)}
+  #rail button.on .k{color:inherit}
+  /* The armed tool determines the next map click, but its 1px border over a 14% fill
+     made this key state hard to see. Use the same edge marker as the initiative turn. */
+  /* Mark every tool consistently; the separate amber effect and fog styles looked
+     unrelated and became even more noticeable when changing themes. */
+  #rail button.on{background:rgba(var(--measure-rgb),.22);box-shadow:inset 3px 0 0 var(--measure);
+    color:var(--measure-soft)}
+  #rail .sep{height:1px;background:var(--line);margin:2px 0}
+
+  /* Undo was available only through Ctrl+Z. Two visible buttons explain the feature and
+     disable when there is nothing to undo. */
+  #hist{position:absolute;top:12px;left:var(--panel-w);right:74px;margin:0 auto;
+    width:fit-content;z-index:11;display:flex;gap:4px;padding:4px;border-radius:10px;
+    background:rgba(var(--panel-rgb),.94);backdrop-filter:blur(10px);
+    box-shadow:0 6px 20px rgba(var(--shadow-rgb),.35)}
+  #panel.hidden ~ #hist{left:8px}
+  #hist button{width:34px;height:30px;padding:0;display:flex;align-items:center;
+    justify-content:center;background:transparent;border-color:transparent}
+  #hist button svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7;
+    stroke-linecap:round;stroke-linejoin:round}
+  #hist button:disabled{opacity:.3;cursor:default;background:transparent}
+  #hist button:not(:disabled):hover{background:var(--panel-hover);border-color:var(--line)}
+
+  /* ---------- context bar ---------- */
+  /* Place the bar between the panel and right rail, not centered in the window, so it
+     does not overlap the shortcut guide or scale. */
+  #ctxbar{position:absolute;left:var(--panel-w);right:74px;bottom:34px;
+    margin:0 auto;width:fit-content;max-width:100%;z-index:11;
+    display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;
+    background:rgba(var(--panel-rgb),.94);backdrop-filter:blur(10px);
+    box-shadow:0 6px 20px rgba(var(--shadow-rgb),.35);
+    font-size:12px;color:var(--muted);flex-wrap:nowrap;justify-content:flex-start;
+    overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+  #panel.hidden ~ #ctxbar{left:8px}
+  #ctxbar.empty{display:none}
+  /* The old guide was a titled box with eight rows and a close button, yet still got in
+     the way and needed tool-specific dismissal. A single low strip avoids obstructing
+     the workspace, so it needs neither a title nor a close button. */
+  #toolHintBar{position:absolute;bottom:82px;left:var(--panel-w);right:74px;
+    margin:0 auto;width:fit-content;max-width:100%;z-index:11;
+    display:none;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center;
+    padding:5px 12px;border-radius:14px;
+    background:rgba(var(--ink-rgb),.72);backdrop-filter:blur(8px);
+    font-size:11.5px;color:var(--muted);pointer-events:none}
+  #panel.hidden ~ #toolHintBar{left:8px}
+  #toolHintBar.on{display:flex}
+  #toolHintBar .fi{display:flex;align-items:center;gap:5px;white-space:nowrap}
+  #toolHintBar b{color:var(--text);font-weight:600;font-family:var(--mono);font-size:10px;
+    background:rgba(var(--panel-rgb),.9);border-radius:4px;padding:2px 5px}
+  #toolHintBar b{color:var(--text);font-weight:600;font-family:var(--mono);font-size:10.5px}
+  #ctxbar .grp{display:none;align-items:center;gap:8px;flex:none}
+  /* Group controls by name with separators. Three groups of three are easier to scan
+     than a row of nine. Keep them visible; searching a dropdown during live play costs more. */
+  #ctxbar .cl{display:flex;align-items:center;gap:8px;flex:none}
+  /* A four-option dropdown takes two clicks to open and one to choose. The segments
+     show every option at once in this live-use tool; the hidden <select> remains in control. */
+  .segs{display:inline-flex;border-radius:var(--radius);overflow:hidden;
+    background:var(--panel-3)}
+  .segs button{border:none;border-radius:0;background:transparent;padding:6px 9px;
+    font-size:11px;color:var(--muted);white-space:nowrap}
+  .segs button:hover{background:var(--panel-hover);color:var(--text)}
+  .segs button.on{background:rgba(var(--measure-rgb),.16);color:var(--measure-soft)}
+  .segs button:focus-visible{outline:2px solid var(--measure);outline-offset:-2px}
+  #ctxbar .sepv{width:1px;align-self:stretch;background:var(--line);margin:0 2px}
+  #ctxbar .danger{color:var(--danger-2)}
+  #ctxbar #calibrationHelp{color:var(--muted)}
+  #ctxbar .danger:hover{background:rgba(var(--danger-rgb),.14);border-color:var(--danger)}
+  #ctxbar .grp.on{display:flex}
+  #ctxbar select,#ctxbar input[type=number]{width:auto;min-width:74px}
+  #ctxbar input[type=range]{width:110px}
+  .sw{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
+  .sw.on{border-color:#fff}
+  .chip{padding:5px 9px;font-size:11px;border-radius:20px;display:flex;align-items:center;gap:5px}
+  .chip i{width:9px;height:9px;border-radius:2px;display:block}
+  .chip.on{border-color:currentColor}
+
+  /* ---------- HUD ---------- */
+  #readout{position:absolute;z-index:9;pointer-events:none;font-family:var(--mono);font-size:14px;font-weight:600;
+    background:rgba(var(--ink-rgb),.82);border-radius:4px;padding:4px 8px;white-space:nowrap;display:none}
+  #toast{position:absolute;bottom:122px;left:50%;transform:translateX(-50%);z-index:12;
+    background:rgba(var(--ink-rgb),.94);border-radius:var(--radius);
+    padding:9px 14px;font-size:12px;font-family:var(--mono);opacity:0;transition:opacity .25s;pointer-events:none}
+  #toast.show{opacity:1}
+  /* The scale was isolated in a corner, leaving no room for zoom or table status. Use a
+     full-width status bar between the panel and rail, as common tool layouts do. */
+  #state{position:absolute;left:var(--panel-w);right:0;bottom:0;height:26px;z-index:9;
+    display:flex;align-items:center;gap:16px;padding:0 14px 0 16px;
+    font-family:var(--mono);font-size:10.5px;color:var(--muted);
+    background:rgba(var(--ink-rgb),.72);backdrop-filter:blur(8px);pointer-events:none}
+  #panel.hidden ~ #state{left:0}
+  #state .sep{flex:1}
+  #state b{color:var(--text);font-weight:500}
+  #state .open{color:var(--frame)}
+  #scalebar{display:flex;align-items:center;gap:7px}
+  #scalebar .bar{height:5px;border:1px solid var(--muted);border-top:none;min-width:20px}
+  #toggle{position:absolute;top:10px;left:10px;z-index:12;width:34px;height:34px;padding:0;
+    background:rgba(var(--panel-rgb),.9);display:none;align-items:center;justify-content:center}
+  #panel.hidden ~ #toggle{display:flex}
+  #empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;pointer-events:none}
+  #empty div{text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+

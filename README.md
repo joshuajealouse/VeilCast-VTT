@@ -79,6 +79,33 @@ Press `?` at any time for the full keyboard shortcut list.
 
 ---
 
+## Project structure
+
+VeilCast is a static HTML, CSS, and JavaScript project with no framework or build step.
+The HTML markup and styles are separate from app code, which is organized as native
+JavaScript modules under `assets/js/`. The same relative asset paths work on GitHub Pages,
+including when the project is hosted from a repository subpath.
+
+To run a local copy, serve the repository root over HTTP (for example, with
+`npx serve .`) and open the local address. ES modules and browser storage do not work
+reliably when opening `index.html` directly from disk.
+
+## Tests
+
+The browser regression suite uses Playwright to exercise the app in Chromium. With
+Node.js 14 or newer, install the test dependencies and browser once, then run:
+
+```sh
+npm install
+npx playwright install chromium
+npm test
+```
+
+The suite covers app startup and tab navigation, plus initiative damage, temporary HP,
+and undo behavior.
+
+---
+
 ## Requirements
 
 A Chromium-based browser and a second screen. That's it.
